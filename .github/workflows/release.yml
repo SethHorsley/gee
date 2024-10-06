@@ -83,7 +83,7 @@ jobs:
           VERSION=${GITHUB_REF#refs/tags/v}
 
           # Clone homebrew-gee repository
-          git clone https://github.com/yourusername/homebrew-gee.git
+          git clone https://${HOMEBREW_TAP_TOKEN}@github.com/SethHorsley/homebrew-gee.git
           cd homebrew-gee
 
           # Update formula file
@@ -98,8 +98,9 @@ jobs:
           sed -i '' "s/sha256 \".*\" # Replace with SHA256 for ARM binary/sha256 \"$ARM_SHA\" # Replace with SHA256 for ARM binary/" Formula/gee.rb
 
           # Commit and push changes
-          git config user.name Seth Horsley
-          git config git-public.ch12j@seth4242.com
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
           git add Formula/gee.rb
           git commit -m "Update gee to version $VERSION"
-          git push https://x-access-token:$HOMEBREW_TAP_TOKEN@github.com/SethHorsley/homebrew-gee.git main
+          git push https://${HOMEBREW_TAP_TOKEN}@github.com/SethHorsley/homebrew-gee.git main
+        shell: bash
