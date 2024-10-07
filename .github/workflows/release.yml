@@ -70,6 +70,18 @@ jobs:
     needs: release
     runs-on: ubuntu-latest
     steps:
+      - name: Get release info
+        id: get_release
+        uses: bruceadams/get-release@v1.2.3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set binary URLs
+        id: set_urls
+        run: |
+          echo "INTEL_URL=${{ steps.get_release.outputs.browser_download_url }}/gee-darwin-x86_64" >> $GITHUB_OUTPUT
+          echo "ARM_URL=${{ steps.get_release.outputs.browser_download_url }}/gee-darwin-arm64" >> $GITHUB_OUTPUT
+
       - uses: mislav/bump-homebrew-formula-action@v3
         with:
           formula-name: gee
@@ -77,5 +89,8 @@ jobs:
           homebrew-tap: SethHorsley/homebrew-gee
           base-branch: main
           download-url: https://github.com/SethHorsley/gee/archive/refs/tags/${{ github.ref_name }}.tar.gz
+          custom-variable: |
+            intel_url=${{ steps.set_urls.outputs.INTEL_URL }}
+            arm_url=${{ steps.set_urls.outputs.ARM_URL }}
         env:
           COMMITTER_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
